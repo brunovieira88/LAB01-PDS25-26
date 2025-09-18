@@ -1,12 +1,12 @@
-package aula01;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class WorldSolverReader {
+public class WSSolver {
     //ATRIBUTOS
     private char[][] puzzle = new char[12][12];
+    private int[] coords;
     private String[] listaPalavras;
 
     
@@ -64,10 +64,9 @@ public class WorldSolverReader {
         for (int i = 0; i < 12; i++){ //linhas
             for(int j = 0; j < 12;j++){ //colunas
                 if (puzzle[i][j] == word.charAt(0)){
-                    if(verificar8direcoes(i,j,word)){
-                        int[] coord = {i,j};
-                        return coord;
-                    }
+                    verificar8direcoes(i,j,word);
+                    return coords;
+
                 }
 
             }
@@ -76,7 +75,7 @@ public class WorldSolverReader {
         return null;
     }
 
-    private boolean verificar8direcoes(int i, int j, String word){
+    private void verificar8direcoes(int i, int j, String word){
         int[][] direcoes = {
             {1, 0},   // Direita
             {-1, 0},  // Esquerda
@@ -87,19 +86,80 @@ public class WorldSolverReader {
             {1, -1},  // Diagonal para cima à direita
             {-1, 1}   // Diagonal para baixo à esquerda
         };
+        if(i == 0 || j == 0){
+            verificarDireita(i, j, word);
+            verificarBaixo(i, j, word);
+        }
+        else if(i == 0 || j == 12){
+            verificarEsquerda(i, j, word);
+            verificarBaixo(i, j, word);
+        }
+        else if (i == 12 || j == 0){
+            verificarDireita(i, j, word);
+            verificarCima(i, j, word);
+        }
+        else if (i == 12 || j == 12){
+            verificarEsquerda(i, j, word);
+            verificarCima(i, j, word);
+        }
 
-        if(i == 0)
+        else {
+            verificarDireita(i, j, word);
+            verificarBaixo(i, j, word);
+            verificarEsquerda(i, j, word);
+            verificarCima(i, j, word);
+        }
         
 
 
+    }
+    private boolean verificarDireita(int i, int j, String word) {
+        if (j + word.length() > 12) return false; // Evita sair fora da matriz
+        for (int x = 0; x < word.length(); x++) {
+            if (puzzle[i][j + x] != word.charAt(x)) {
+                return false;
+            }
+        }
+        System.out.println(puzzle[i][j]);
+        return true;
+    }
+
+    private boolean verificarEsquerda(int i, int j, String word) {
+        if (j - word.length() + 1 < 0) return false; // Evita sair fora da matriz
+        for (int x = 0; x < word.length(); x++) {
+            if (puzzle[i][j - x] != word.charAt(x)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean verificarBaixo(int i, int j, String word) {
+        if (i + word.length() > 12) return false; // Evita sair fora da matriz
+        for (int y = 0; y < word.length(); y++) {
+            if (puzzle[i + y][j] != word.charAt(y)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean verificarCima(int i, int j, String word) {
+        if (i - word.length() + 1 < 0) return false; // Evita sair fora da matriz
+        for (int y = 0; y < word.length(); y++) {
+            if (puzzle[i - y][j] != word.charAt(y)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 
 
     public static void main(String[] args) {
-        WorldSolverReader c = new WorldSolverReader();
+        WSSolver c = new WSSolver();
         c.readWorldSearch("sdl_01.txt");
-        System.out.println(c.toString());
+        c.encontrarPalavra("STACK");
     }
 
 
