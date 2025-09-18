@@ -6,7 +6,6 @@ import java.util.Scanner;
 public class WSSolver {
     //ATRIBUTOS
     private char[][] puzzle = new char[12][12];
-    private int[] coords;
     private String[] listaPalavras;
 
     
@@ -60,59 +59,53 @@ public class WSSolver {
     }
 
 
-    public int[] encontrarPalavra(String word){
+    public boolean encontrarPalavra(String word){
         for (int i = 0; i < 12; i++){ //linhas
             for(int j = 0; j < 12;j++){ //colunas
-                if (puzzle[i][j] == word.charAt(0)){
-                    verificar8direcoes(i,j,word);
-                    return coords;
-
+                if (puzzle[i][j] == word.charAt(0) && verificar8direcoes(i,j,word)){
+                    System.out.printf("%d,%d\n",i + 1,j + 1);//adiciona-se i + 1, j + 1 para obter numero da coluna e nao o indice 
+                    return true;
                 }
 
             }
         }
         System.out.println("Palavra não encontrada!");
-        return null;
+        return false;
     }
 
-    private void verificar8direcoes(int i, int j, String word){
-        int[][] direcoes = {
-            {1, 0},   // Direita
-            {-1, 0},  // Esquerda
-            {0, 1},   // Para baixo
-            {0, -1},  // Para cima
-            {1, 1},   // Diagonal para baixo à direita
-            {-1, -1}, // Diagonal para cima à esquerda
-            {1, -1},  // Diagonal para cima à direita
-            {-1, 1}   // Diagonal para baixo à esquerda
-        };
+    private boolean verificar8direcoes(int i, int j, String word){
         if(i == 0 || j == 0){
-            verificarDireita(i, j, word);
-            verificarBaixo(i, j, word);
+            if(verificarDireita(i, j, word) || verificarBaixo(i, j, word) ){
+                return true;
+            }
         }
         else if(i == 0 || j == 12){
-            verificarEsquerda(i, j, word);
-            verificarBaixo(i, j, word);
+            if(verificarEsquerda(i, j, word) || verificarBaixo(i, j, word)){
+                return true;
+            }
         }
         else if (i == 12 || j == 0){
-            verificarDireita(i, j, word);
-            verificarCima(i, j, word);
+            if(verificarDireita(i, j, word) || verificarCima(i, j, word)){
+                return true;
+            }
         }
         else if (i == 12 || j == 12){
-            verificarEsquerda(i, j, word);
-            verificarCima(i, j, word);
+            if (verificarEsquerda(i, j, word) || verificarCima(i, j, word)){
+                return true;
+            }
         }
 
         else {
-            verificarDireita(i, j, word);
-            verificarBaixo(i, j, word);
-            verificarEsquerda(i, j, word);
-            verificarCima(i, j, word);
+            if(verificarDireita(i, j, word) || verificarBaixo(i, j, word) || verificarEsquerda(i, j, word) || verificarCima(i, j, word)){
+                return true;
+            }
+            return false;
         }
         
-
-
+        return false;
     }
+
+
     private boolean verificarDireita(int i, int j, String word) {
         if (j + word.length() > 12) return false; // Evita sair fora da matriz
         for (int x = 0; x < word.length(); x++) {
@@ -159,9 +152,8 @@ public class WSSolver {
     public static void main(String[] args) {
         WSSolver c = new WSSolver();
         c.readWorldSearch("sdl_01.txt");
-        c.encontrarPalavra("STACK");
+        c.encontrarPalavra("CIVIL");
     }
-
 
 
 }
