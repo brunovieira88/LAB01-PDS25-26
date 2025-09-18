@@ -6,7 +6,8 @@ import java.util.Scanner;
 
 public class WSSolver {
     //ATRIBUTOS
-    private char[][] puzzle = new char[12][12];
+    private char[][] puzzle;
+    private int tamanhopuzzle;
     private ArrayList<String> listaPalavras = new ArrayList<>();
 
     
@@ -14,10 +15,10 @@ public class WSSolver {
         return listaPalavras;
     }
 
-
-    public static boolean isSquare(String[][] a){
-        return a.length == a[0].length && a.length < 40;
+    public boolean isSquare(ArrayList<String> a){
+        return a.size() == a.get(0).length();
     }
+
 
     public static boolean isUpper(String a){
         for(Character c: a.toCharArray()){
@@ -31,22 +32,30 @@ public class WSSolver {
     //LEITURA DE UM FICHEIRO
     public boolean readWorldSearch(String nameFile){
         File file = new File(nameFile);
+        ArrayList<String> leituraPuzzle = new ArrayList<>();
         try(Scanner sc = new Scanner(file)){
             String lineFile;
-            int i = 0;
             while(sc.hasNextLine()){
                 lineFile = sc.nextLine();
                 if(isUpper(lineFile.trim())){
-                    char[] arrayLine = lineFile.toCharArray();
-                    puzzle[i] = arrayLine;
-                    i++;
+                    leituraPuzzle.add(lineFile);
                 }
                 else{
                     listaPalavras.addAll(Arrays.asList(lineFile.split("[;,\\s]")));
                 }
 
             }
+            if(!isSquare(leituraPuzzle)){ //VERIFICAR SE É QUADRADO
+                System.out.println("O puzzle não é quadrado!");
+                return false;
+            }
+            tamanhopuzzle = leituraPuzzle.size();
+            puzzle = new char[tamanhopuzzle][tamanhopuzzle];
+            for(int i = 0; i < tamanhopuzzle; i++){
+                puzzle[i] = leituraPuzzle.get(i).toCharArray();
+            }
             return true;
+
         }catch(FileNotFoundException e ){
             System.out.println("Ficheiro não encontrado!");
             return false;
@@ -63,8 +72,8 @@ public class WSSolver {
 
 
     public boolean encontrarPalavra(String word){
-        for (int i = 0; i < 12; i++){ //linhas
-            for(int j = 0; j < 12;j++){ //colunas
+        for (int i = 0; i < this.tamanhopuzzle; i++){ //linhas
+            for(int j = 0; j < this.tamanhopuzzle;j++){ //colunas
                 if (puzzle[i][j] == word.charAt(0) && verificar8direcoes(i,j,word)){
                     System.out.printf("%s:(%d,%d)\n",word,i + 1,j + 1);//adiciona-se i + 1, j + 1 para obter numero da coluna e nao o indice 
                     return true;
@@ -92,7 +101,7 @@ public class WSSolver {
 
 
     private boolean verificarDireita(int i, int j, String word) {
-        if (j + word.length() > 12) return false; // Evita sair fora da matriz
+        if (j + word.length() > this.tamanhopuzzle) return false; // Evita sair fora da matriz
         for (int x = 0; x < word.length(); x++) {
             if (puzzle[i][j + x] != word.charAt(x)) {
                 return false;
@@ -112,7 +121,7 @@ public class WSSolver {
     }
 
     private boolean verificarBaixo(int i, int j, String word) {
-        if (i + word.length() > 12) return false; // Evita sair fora da matriz
+        if (i + word.length() > this.tamanhopuzzle) return false; // Evita sair fora da matriz
         for (int y = 0; y < word.length(); y++) {
             if (puzzle[i + y][j] != word.charAt(y)) {
                 return false;
@@ -132,7 +141,7 @@ public class WSSolver {
     }
 
     private boolean verificarDireitaCima(int i, int j, String word){
-        if ((j + word.length() > 12) || (i - word.length() + 1 < 0)) return false;
+        if ((j + word.length() > this.tamanhopuzzle) || (i - word.length() + 1 < 0)) return false;
         for(int k = 0; k < word.length();k++){
             if(puzzle[i - k][j + k] != word.charAt(k)){
                 return false;
@@ -142,7 +151,7 @@ public class WSSolver {
     }
 
     private boolean verificarDireitaBaixo(int i, int j, String word){
-        if ((j + word.length() > 12) || (i + word.length() > 12)) return false;
+        if ((j + word.length() > this.tamanhopuzzle) || (i + word.length() > this.tamanhopuzzle)) return false;
         for(int k = 0; k < word.length();k++){
             if(puzzle[i + k][j + k] != word.charAt(k)){
                 return false;
@@ -164,7 +173,7 @@ public class WSSolver {
     }
 
     private boolean verificarEsquerdaBaixo(int i, int j, String word){
-        if((j - word.length() + 1 < 0) || (i + word.length() > 12)) return false;
+        if((j - word.length() + 1 < 0) || (i + word.length() > this.tamanhopuzzle)) return false;
         for(int k = 0; k < word.length();k++){
             if(puzzle[i + k][j - k] != word.charAt(k)){
                 return false;
@@ -176,7 +185,7 @@ public class WSSolver {
 
     public static void main(String[] args) {
         WSSolver c = new WSSolver();
-        c.readWorldSearch("sdl_01.txt");
+        c.readWorldSearch("test.txt");
         c.getListaPalavras().forEach(s -> c.encontrarPalavra(s.toUpperCase()));
         System.out.println(c.toString());
     }
