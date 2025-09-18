@@ -1,14 +1,20 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class WSSolver {
     //ATRIBUTOS
     private char[][] puzzle = new char[12][12];
-    private String[] listaPalavras;
+    private ArrayList<String> listaPalavras = new ArrayList<>();
 
     
+    public ArrayList<String> getListaPalavras() {
+        return listaPalavras;
+    }
+
+
     public static boolean isSquare(String[][] a){
         return a.length == a[0].length && a.length < 40;
     }
@@ -31,13 +37,12 @@ public class WSSolver {
             while(sc.hasNextLine()){
                 lineFile = sc.nextLine();
                 if(isUpper(lineFile.trim())){
-                    System.out.println(lineFile.toCharArray());
                     char[] arrayLine = lineFile.toCharArray();
                     puzzle[i] = arrayLine;
                     i++;
                 }
                 else{
-                    listaPalavras = lineFile.trim().split(";");
+                    listaPalavras.addAll(Arrays.asList(lineFile.split("[;,\\s]")));
                 }
 
             }
@@ -52,8 +57,8 @@ public class WSSolver {
 
     @Override
     public String toString() {
-        return "WorldSolverReader [puzzle=" + Arrays.deepToString(puzzle) + ", listaPalavras="
-                + Arrays.toString(listaPalavras) + "]";
+        return Arrays.deepToString(puzzle) + ", listaPalavras="
+                + listaPalavras.toString();
     }
 
 
@@ -61,7 +66,7 @@ public class WSSolver {
         for (int i = 0; i < 12; i++){ //linhas
             for(int j = 0; j < 12;j++){ //colunas
                 if (puzzle[i][j] == word.charAt(0) && verificar8direcoes(i,j,word)){
-                    System.out.printf("%d,%d\n",i + 1,j + 1);//adiciona-se i + 1, j + 1 para obter numero da coluna e nao o indice 
+                    System.out.printf("%s:(%d,%d)\n",word,i + 1,j + 1);//adiciona-se i + 1, j + 1 para obter numero da coluna e nao o indice 
                     return true;
                 }
 
@@ -93,7 +98,6 @@ public class WSSolver {
                 return false;
             }
         }
-        System.out.println(puzzle[i][j]);
         return true;
     }
 
@@ -167,15 +171,14 @@ public class WSSolver {
             }
         }
         return true;
-
     }
 
 
     public static void main(String[] args) {
         WSSolver c = new WSSolver();
         c.readWorldSearch("sdl_01.txt");
-        c.encontrarPalavra("WORDS");
+        c.getListaPalavras().forEach(s -> c.encontrarPalavra(s.toUpperCase()));
+        System.out.println(c.toString());
     }
-
 
 }
