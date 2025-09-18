@@ -74,34 +74,9 @@ public class WSSolver {
     }
 
     private boolean verificar8direcoes(int i, int j, String word){
-        if(i == 0 || j == 0){
-            if(verificarDireita(i, j, word) || verificarBaixo(i, j, word) ){
-                return true;
-            }
+        if(verificarCima(i, j, word) || verificarDireita(i, j, word) || verificarEsquerda(i, j, word) || verificarBaixo(i, j, word)){
+            return true;
         }
-        else if(i == 0 || j == 12){
-            if(verificarEsquerda(i, j, word) || verificarBaixo(i, j, word)){
-                return true;
-            }
-        }
-        else if (i == 12 || j == 0){
-            if(verificarDireita(i, j, word) || verificarCima(i, j, word)){
-                return true;
-            }
-        }
-        else if (i == 12 || j == 12){
-            if (verificarEsquerda(i, j, word) || verificarCima(i, j, word)){
-                return true;
-            }
-        }
-
-        else {
-            if(verificarDireita(i, j, word) || verificarBaixo(i, j, word) || verificarEsquerda(i, j, word) || verificarCima(i, j, word)){
-                return true;
-            }
-            return false;
-        }
-        
         return false;
     }
 
@@ -146,13 +121,33 @@ public class WSSolver {
         }
         return true;
     }
+/* 
+    private boolean verificarDireitaCima(int i, int j, String word){
 
 
+    }
+
+    private boolean verificarDireitaBaixo(int i, int j, String word){
+
+        
+    }
+
+    private boolean verificarEsquerdaCima(int i, int j, String word){
+
+
+    }
+
+    private boolean verificarEsquerdaBaixo(int i, int j, String word){
+
+
+    }
+
+*/
 
     public static void main(String[] args) {
         WSSolver c = new WSSolver();
         c.readWorldSearch("sdl_01.txt");
-        c.encontrarPalavra("CIVIL");
+        c.encontrarPalavra("LINES");
     }
 
 
