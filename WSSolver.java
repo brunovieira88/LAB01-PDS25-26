@@ -50,8 +50,6 @@ public class WSSolver {
     }
 
 
-
-
     @Override
     public String toString() {
         return "WorldSolverReader [puzzle=" + Arrays.deepToString(puzzle) + ", listaPalavras="
@@ -77,6 +75,13 @@ public class WSSolver {
         if(verificarCima(i, j, word) || verificarDireita(i, j, word) || verificarEsquerda(i, j, word) || verificarBaixo(i, j, word)){
             return true;
         }
+        if(verificarDireitaCima(i, j, word) || verificarDireitaBaixo(i, j, word)
+        || verificarEsquerdaCima(i, j, word) || verificarEsquerdaBaixo(i, j, word)){
+            return true;
+        } /* ESTA SEPARADO POIS ASSIM TEMOS MAIOR PERFORMANCE SE AS PALAVRAS NAO FOREM DIAGONAIS
+        PORQUE A MAORIA DAS PALAVRAS SÃO HORIZONTAIS OU VERTICAIS*/
+
+
         return false;
     }
 
@@ -121,33 +126,55 @@ public class WSSolver {
         }
         return true;
     }
-/* 
+
     private boolean verificarDireitaCima(int i, int j, String word){
-
-
+        if ((j + word.length() > 12) || (i - word.length() + 1 < 0)) return false;
+        for(int k = 0; k < word.length();k++){
+            if(puzzle[i - k][j + k] != word.charAt(k)){
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean verificarDireitaBaixo(int i, int j, String word){
-
+        if ((j + word.length() > 12) || (i + word.length() > 12)) return false;
+        for(int k = 0; k < word.length();k++){
+            if(puzzle[i + k][j + k] != word.charAt(k)){
+                return false;
+            }
+        }
+        return true;
         
     }
 
     private boolean verificarEsquerdaCima(int i, int j, String word){
-
+        if ((j - word.length() + 1 < 0) || (i - word.length() + 1 < 0)) return false;
+        for(int k = 0; k < word.length();k++){
+            if(puzzle[i - k][j - k] != word.charAt(k)){
+                return false;
+            }
+        }
+        return true;
 
     }
 
     private boolean verificarEsquerdaBaixo(int i, int j, String word){
-
+        if((j - word.length() + 1 < 0) || (i + word.length() > 12)) return false;
+        for(int k = 0; k < word.length();k++){
+            if(puzzle[i + k][j - k] != word.charAt(k)){
+                return false;
+            }
+        }
+        return true;
 
     }
 
-*/
 
     public static void main(String[] args) {
         WSSolver c = new WSSolver();
         c.readWorldSearch("sdl_01.txt");
-        c.encontrarPalavra("LINES");
+        c.encontrarPalavra("WORDS");
     }
 
 
