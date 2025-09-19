@@ -1,9 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.io.*;
 
 public class WSGenerator {
-    private char[][] grid;
+    private Soup soup;
     private int size;
     private List<String> words;
     private Random random;
@@ -11,14 +12,15 @@ public class WSGenerator {
 
     WSGenerator(int size){
         this.size = size;
-        this.grid = new char[size][size];
+        char[][] grid = new char[size][size];
         this.words = new ArrayList<>();
         this.random = new Random();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                this.grid[i][j] = '-'; //preencher toda a tabela
+                grid[i][j] = '-'; //preencher toda a tabela
             }
         }
+        this.soup = new Soup(grid);
     }
     
     public void generateGrid(List<String> words) {
@@ -30,12 +32,13 @@ public class WSGenerator {
             placeWord(word.toLowerCase().trim());
         }
         fill();
-        
+        soup.setPalavrasChave(new ArrayList<>(words));
     }
 
     private void placeWord(String word){
         boolean placed = false;
         int attempts=0;
+        char[][] grid = soup.getArraySoup();
         //so para de tentar se ja for placed ou se exceder demasiadas tentativas(numero a rever)
         while (!placed && attempts <999){
             attempts++;
@@ -62,12 +65,14 @@ public class WSGenerator {
                 placed = true;
             }
         }
+        soup.setArraySoup(grid);
 
     }
 
     private boolean hasSpace(String word, int beginX, int beginY, int x, int y){
         int bX = beginX;
         int bY = beginY;
+        char[][] grid = soup.getArraySoup();
 
         for(int i = 0; i<word.length();i++){
             //confirmar se nao sai dos limites da matriz
@@ -87,6 +92,7 @@ public class WSGenerator {
     }
 
     public void fill() {
+        char[][] grid = soup.getArraySoup();
         for (int i = 0; i < size; i++){
             for (int j = 0; j < size; j++){
                 if(grid[i][j]=='-'){
@@ -95,28 +101,58 @@ public class WSGenerator {
                 }
             }
         }
+        soup.setArraySoup(grid);
+    }
+    public Soup getSoup() {
+        return soup;
     }
 
     public static void main(String[] args) {
-        //TESTE
-        WSGenerator generator = new WSGenerator(10);
-        List<String> words = new ArrayList<>();
-        words.add("Java");
-        words.add("Program");
-        words.add("Code");
-        words.add("Receba");
-        generator.generateGrid(words);
-
-        //print da sopa
-        for (int i = 0; i < generator.size; i++) {
-            for (int j = 0; j < generator.size; j++) {
-                System.out.print(generator.grid[i][j] + " ");
-            }
-            System.out.println();
+        if (args.length == 0) {
+            System.out.println("Use: java WSGenerator -w <wordlist.txt> -s <saida.txt>");
+            System.exit(1);
         }
-        for (String word : words){
-            System.out.printf("%s\n", word);
+        String inputFile = null;
+        String outputFile = null;
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-w")) {
+                inputFile = args[++i];
+            } else if (args[i].equals("-s")) {
+                outputFile = args[++i];
+            }
+        }
+
+        if (inputFile == null || outputFile == null) {
+            System.out.println("Error: Forgot -w or -s.");
+            System.exit(1);;
+        }
+        try {
+            //ler palavras d+o file 
+            List<String> words = new ArrayList<>();
+            try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (!line.trim().isEmpty()) {
+                        words.add(line.trim());
+                    }
+                }
+            }
+
+            int size = 30;
+            WSGenerator generator = new WSGenerator(size);
+            generator.generateGrid(words);
+
+            //guardar noutro ficheiro 
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
+                bw.write(generator.getSoup().toString());
+            }
+
+            System.out.println("WordSoup saved with success: " + outputFile);
+
+        } catch (IOException e) {
+            System.out.println("There was an error processing the files: " + e.getMessage());
         }
     }
-    
 }
+

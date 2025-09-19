@@ -73,6 +73,9 @@ public class Soup {
             }
             out.append("\n");
         }
+        for (String palavra : palavrasChave){
+            out.append(palavra).append("\n");
+        }
         return out.toString();
 
     }
