@@ -208,4 +208,19 @@ public class WSSolver {
         System.out.println(sopaSolucao.toString());
     }
 
+        public static void main(String[] args) {
+        if (args.length == 0) {
+            System.out.println("Uso: java WSSolver <nome_do_arquivo>");
+            System.exit(1);
+        }
+        
+        WSSolver solver = new WSSolver();
+        if (solver.readWorldSearch(args[0])) {
+            solver.solve();
+            solver.showSolution();
+            solver.showGraphSolution();
+        }
+    }
+
+
 }
