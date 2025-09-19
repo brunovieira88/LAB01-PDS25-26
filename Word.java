@@ -1,32 +1,18 @@
 public class Word {
 
     private String nome;
-    private Integer coordenadas[];
-    private direcao dir;
-    private sentido sen;
-    private enum direcao {
-        HORIZONTAL,
-        VERTICAL,
-        DIAGONAL
-    };
+    private int i,j;
+    private Direction direcao;
 
-    private enum sentido{
-        NORMAL,
-        INVERSO
-    };
-
-    Word (String nome, Integer coordenadas[], int direcao, int sentido){
+    Word (String nome, int x ,int y, Direction direction){
         this.nome = nome;
-        if (coordenadas[0] >= 0 && coordenadas[0] <= 40 && coordenadas[1] != null){ //ver depois porque na 2a alinea o tamanho arbitrario
-            this.coordenadas = coordenadas;
+        if (x >= 0 && x <= 40 && y != 0){ //ver depois porque na 2a alinea o tamanho arbitrario
+            this.i = x;
+            this.j = y;
         }
-        this.dir = Word.direcao.values()[direcao];
-        this.sen = Word.sentido.values()[sentido];
+        this.direcao = direction;
     }
 
-    public Word(String nome) {
-        this.nome = nome;
-    }
 
     public String getNome() {
         return nome;
@@ -36,30 +22,38 @@ public class Word {
         this.nome = nome;
     }
 
-    public Integer[] getCoordenadas() {
-        return coordenadas;
+    public int getI() {
+        return i;
     }
 
-    public void setCoordenadas(Integer[] coordenadas) {
-        this.coordenadas = coordenadas;
+    public void setI(int i) {
+        this.i = i;
     }
 
-    public direcao getDir() {
-        return dir;
+    public int getJ() {
+        return j;
     }
 
-    public void setDir(direcao dir) {
-        this.dir = dir;
+    public void setJ(int j) {
+        this.j = j;
     }
 
-    public sentido getSen() {
-        return sen;
+    public Direction getDirecao() {
+        return direcao;
     }
 
-    public void setSen(sentido sen) {
-        this.sen = sen;
+    public void setDirecao(Direction direcao) {
+        this.direcao = direcao;
+    }
+
+    //TO STRING
+    @Override
+    public String toString() {
+        StringBuffer out = new StringBuffer();
+        //adiciona-se i + 1, j + 1 para obter numero da coluna e nao o indice
+        out.append(String.format("%-20s %-8d %d,%-5d %s", nome,nome.length(),i + 1,j + 1,this.getDirecao()));
+        return out.toString();
     }
 
     
-
 }

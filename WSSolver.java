@@ -7,6 +7,7 @@ import java.util.Scanner;
 public class WSSolver {
     //ATRIBUTOS
     private Soup sopaLetras;
+    private ArrayList<Word> palavrasSolucao;
 
     public Soup getSopaLetras() {
         return sopaLetras;
@@ -34,11 +35,12 @@ public class WSSolver {
                     leituraPuzzle.add(lineFile);
                 }
                 else{
-                    leituraPalavrasPuzzle.addAll(Arrays.asList(lineFile.split("[;,\\s]")));
+                    leituraPalavrasPuzzle.addAll(Arrays.asList(lineFile.split("[;,\s]")));
                 }
 
             }
             sopaLetras = new Soup(leituraPuzzle, leituraPalavrasPuzzle);
+            palavrasSolucao = new ArrayList<>();
             return true;
 
         }catch(FileNotFoundException e ){
@@ -53,7 +55,6 @@ public class WSSolver {
         for (int i = 0; i < sopaLetras.getDimSoup(); i++){ //linhas
             for(int j = 0; j < this.sopaLetras.getDimSoup();j++){ //colunas
                 if (sopaLetras.getArraySoup()[i][j] == word.charAt(0) && verificar8direcoes(i,j,word)){
-                    System.out.printf("%s:(%d,%d)\n",word,i + 1,j + 1);//adiciona-se i + 1, j + 1 para obter numero da coluna e nao o indice 
                     return true;
                 }
 
@@ -67,8 +68,8 @@ public class WSSolver {
         if(verificarCima(i, j, word) || verificarDireita(i, j, word) || verificarEsquerda(i, j, word) || verificarBaixo(i, j, word)){
             return true;
         }
-        if(verificarDireitaCima(i, j, word) || verificarDireitaBaixo(i, j, word)
-        || verificarEsquerdaCima(i, j, word) || verificarEsquerdaBaixo(i, j, word)){
+        if(verificarCimaDireita(i, j, word) || verificarBaixoDireita(i, j, word)
+        || verificarCimaEsquerda(i, j, word) || verificarBaixoEsquerda(i, j, word)){
             return true;
         } /* ESTA SEPARADO POIS ASSIM TEMOS MAIOR PERFORMANCE SE AS PALAVRAS NAO FOREM DIAGONAIS
         PORQUE A MAORIA DAS PALAVRAS SÃO HORIZONTAIS OU VERTICAIS*/
@@ -84,6 +85,8 @@ public class WSSolver {
                 return false;
             }
         }
+        Word encontrada = new Word(word, i, j, Direction.RIGHT);
+        palavrasSolucao.add(encontrada);
         return true;
     }
 
@@ -94,6 +97,8 @@ public class WSSolver {
                 return false;
             }
         }
+        Word encontrada = new Word(word, i, j, Direction.LEFT);
+        palavrasSolucao.add(encontrada);
         return true;
     }
 
@@ -104,6 +109,8 @@ public class WSSolver {
                 return false;
             }
         }
+        Word encontrada = new Word(word, i, j, Direction.DOWN);
+        palavrasSolucao.add(encontrada);
         return true;
     }
 
@@ -114,57 +121,92 @@ public class WSSolver {
                 return false;
             }
         }
+        Word encontrada = new Word(word, i, j, Direction.UP);
+        palavrasSolucao.add(encontrada);
         return true;
     }
 
-    private boolean verificarDireitaCima(int i, int j, String word){
+    private boolean verificarCimaDireita(int i, int j, String word){
         if ((j + word.length() > sopaLetras.getDimSoup()) || (i - word.length() + 1 < 0)) return false;
         for(int k = 0; k < word.length();k++){
             if(sopaLetras.getArraySoup()[i - k][j + k] != word.charAt(k)){
                 return false;
             }
         }
+        Word encontrada = new Word(word, i, j, Direction.UP_RIGHT);
+        palavrasSolucao.add(encontrada);
         return true;
     }
 
-    private boolean verificarDireitaBaixo(int i, int j, String word){
+    private boolean verificarBaixoDireita(int i, int j, String word){
         if ((j + word.length() > sopaLetras.getDimSoup()) || (i + word.length() > sopaLetras.getDimSoup())) return false;
         for(int k = 0; k < word.length();k++){
             if(sopaLetras.getArraySoup()[i + k][j + k] != word.charAt(k)){
                 return false;
             }
         }
+        Word encontrada = new Word(word, i, j, Direction.DOWN_RIGHT);
+        palavrasSolucao.add(encontrada);
         return true;
         
     }
 
-    private boolean verificarEsquerdaCima(int i, int j, String word){
+    private boolean verificarCimaEsquerda(int i, int j, String word){
         if ((j - word.length() + 1 < 0) || (i - word.length() + 1 < 0)) return false;
         for(int k = 0; k < word.length();k++){
             if(sopaLetras.getArraySoup()[i - k][j - k] != word.charAt(k)){
                 return false;
             }
         }
+        Word encontrada = new Word(word, i, j, Direction.UP_LEFT);
+        palavrasSolucao.add(encontrada);
         return true;
 
     }
 
-    private boolean verificarEsquerdaBaixo(int i, int j, String word){
+    private boolean verificarBaixoEsquerda(int i, int j, String word){
         if((j - word.length() + 1 < 0) || (i + word.length() > sopaLetras.getDimSoup())) return false;
         for(int k = 0; k < word.length();k++){
             if(sopaLetras.getArraySoup()[i + k][j - k] != word.charAt(k)){
                 return false;
             }
         }
+        Word encontrada = new Word(word, i, j, Direction.DOWN_LEFT);
+        palavrasSolucao.add(encontrada);
         return true;
     }
 
+    public void showSolution(){
+        for(Word solucao : palavrasSolucao){
+            System.out.println(solucao.toString());
+        }
+    }
+
+    public void showGraphSolution(){
+        char[][] gridsolution = new char[sopaLetras.getDimSoup()][sopaLetras.getDimSoup()];
+        for (char[] linha : gridsolution) {
+            Arrays.fill(linha, '.');
+        }
+        for(Word solucao : palavrasSolucao){
+            int coords[] = {solucao.getI(), solucao.getJ()};
+            for (char letra : solucao.getNome().toCharArray()){
+                gridsolution[coords[0]][coords[1]] = letra;
+                coords[0] += solucao.getDirecao().getDx() ;
+                coords[1] += solucao.getDirecao().getDy() ;
+            }
+        }
+        Soup sopaSolucao = new Soup(gridsolution);
+        System.out.println(sopaSolucao.toString());
+    }
 
     public static void main(String[] args) {
         WSSolver c = new WSSolver();
         c.readWorldSearch("sdl_01.txt");
+        c.encontrarPalavra("PROGRAMMING");
         c.encontrarPalavra("WORDS");
-        System.out.println(c.getSopaLetras().toString());
+        c.encontrarPalavra("CIVIL");
+        c.showSolution();
+        c.showGraphSolution();
     }
 
 }

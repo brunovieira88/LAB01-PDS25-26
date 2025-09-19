@@ -17,6 +17,10 @@ public class Soup {
         this.setListaPalavras(words);
     }
 
+    public Soup(char[][] solution){
+        this.arraySoup = solution;
+    }
+
 
     //GETTERS E SETTERS
     public char[][] getArraySoup() {
@@ -40,7 +44,6 @@ public class Soup {
         this.listaPalavras = listaPalavras;
     }
 
-    
 
     //METODOS ESPECIAIS
     public boolean isSquare(){
