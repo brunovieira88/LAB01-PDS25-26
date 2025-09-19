@@ -1,5 +1,4 @@
-public class WordSoup {
-    
+public class WordSoup { 
     int size;
     Word palavras[];
 }
