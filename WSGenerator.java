@@ -20,17 +20,6 @@ public class WSGenerator {
             }
         }
     }
-
-    private static final int[][] DIRECTIONS = {
-        {0, 1},   // direita
-        {1, 0},   // baixo
-        {1, 1},   // diagonal baixo direita
-        {0, -1},  // esquerda
-        {-1, 0},  // cima
-        {-1, -1}, // diagonal cima esquerda
-        {1, -1},  // diagonal cima direita
-        {-1, 1}   // diagonal baixo esquerda
-    };
     
     public void generateGrid(List<String> words) {
         this.words = new ArrayList<>(words);
@@ -51,9 +40,10 @@ public class WSGenerator {
         while (!placed && attempts <999){
             attempts++;
             //selecionar direcao random
-            int dirNum = random.nextInt(DIRECTIONS.length);
-            int x = DIRECTIONS[dirNum][0];
-            int y = DIRECTIONS[dirNum][1];
+            Direction[] directions = Direction.values();
+            Direction dir = directions[random.nextInt(directions.length)];
+            int x = dir.getDx();
+            int y = dir.getDy();
 
             //se for 0,0 tenta again porque nao se mexe em 0,0
             if(x == 0 && y == 0) {continue;}
