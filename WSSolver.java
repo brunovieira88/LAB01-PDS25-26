@@ -31,11 +31,18 @@ public class WSSolver {
             String lineFile;
             while(sc.hasNextLine()){
                 lineFile = sc.nextLine();
-                if(isUpper(lineFile.trim())){
+                if(lineFile.trim().isEmpty()){//verificar se tem linhas vazias
+                    throw new IllegalArgumentException("O ficheiro tem linhas vazias!");
+                }
+                if(isUpper(lineFile.trim())){//verificar se as letras estão em maiuscula
                     leituraPuzzle.add(lineFile);
                 }
                 else{
-                    leituraPalavrasPuzzle.addAll(Arrays.asList(lineFile.split("[;,\s]")));
+                    for(String palavra : lineFile.split("[;,\\s]")){ //palavras separadas por ; , 
+                        if(palavra.matches("[a-zA-Z]+")){//verifica palavras com caracteres alfabeticos
+                            leituraPalavrasPuzzle.add(palavra);
+                        }
+                    }
                 }
 
             }
@@ -49,18 +56,20 @@ public class WSSolver {
         }
 
     }
-
+    public void solve(){
+        this.sopaLetras.getPalavrasChave().forEach(s -> encontrarPalavra(s));
+    }
 
     public boolean encontrarPalavra(String word){
         for (int i = 0; i < sopaLetras.getDimSoup(); i++){ //linhas
             for(int j = 0; j < this.sopaLetras.getDimSoup();j++){ //colunas
-                if (sopaLetras.getArraySoup()[i][j] == word.charAt(0) && verificar8direcoes(i,j,word)){
+                if (sopaLetras.getArraySoup()[i][j] == word.toUpperCase().charAt(0) && verificar8direcoes(i,j,word.toUpperCase())){
                     return true;
                 }
 
             }
         }
-        System.out.println("Palavra não encontrada!");
+        System.out.printf("Palavra %s não encontrada!\n",word);
         return false;
     }
 
@@ -197,16 +206,6 @@ public class WSSolver {
         }
         Soup sopaSolucao = new Soup(gridsolution);
         System.out.println(sopaSolucao.toString());
-    }
-
-    public static void main(String[] args) {
-        WSSolver c = new WSSolver();
-        c.readWorldSearch("sdl_01.txt");
-        c.encontrarPalavra("PROGRAMMING");
-        c.encontrarPalavra("WORDS");
-        c.encontrarPalavra("CIVIL");
-        c.showSolution();
-        c.showGraphSolution();
     }
 
 }

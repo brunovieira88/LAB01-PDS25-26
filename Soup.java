@@ -4,17 +4,20 @@ public class Soup {
     //ATRIBUTOS
     private char[][] arraySoup;
     private int dimSoup;
-    private ArrayList<String> listaPalavras = new ArrayList<>();
+    private ArrayList<String> palavrasChave = new ArrayList<>();
 
     //CONSTRUTOR
     public Soup(ArrayList<String> soup,ArrayList<String> words){
         if(!isSquare(soup)){
-            throw new IllegalArgumentException("A soupa não é quadrada!");
+            throw new IllegalArgumentException("A puzzle não é quadrado!");//verficar quadrado
+        }
+        if(soup.size() > 40){
+            throw new IllegalArgumentException("O puzzle tem tamanho superior a 40x40!");//tamanho maximo
         }
         this.dimSoup = soup.size();
         this.arraySoup = new char[dimSoup][dimSoup];
         this.fillSoup(soup);
-        this.setListaPalavras(words);
+        this.setPalavrasChave(words);
     }
 
     public Soup(char[][] solution){
@@ -36,12 +39,12 @@ public class Soup {
         this.dimSoup = dimSoup;
     }
 
-    public ArrayList<String> getListaPalavras() {
-        return listaPalavras;
+    public ArrayList<String> getPalavrasChave() {
+        return palavrasChave;
     }
 
-    public void setListaPalavras(ArrayList<String> listaPalavras) {
-        this.listaPalavras = listaPalavras;
+    public void setPalavrasChave(ArrayList<String> listaPalavras) {
+        this.palavrasChave = listaPalavras;
     }
 
 
