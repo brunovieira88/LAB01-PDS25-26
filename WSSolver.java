@@ -7,19 +7,10 @@ import java.util.Scanner;
 public class WSSolver {
     //ATRIBUTOS
     private Soup sopaLetras;
-    private ArrayList<Word> palavrasSolucao;
+    private ArrayList<WordOnSoup> palavrasSolucao;
 
     public Soup getSopaLetras() {
         return sopaLetras;
-    }
-
-    public static boolean isUpper(String a){
-        for(Character c: a.toCharArray()){
-            if(Character.isLetter(c)  && Character.isLowerCase(c)){
-                return false;
-            }
-        }
-        return true;
     }
 
     //LEITURA DE UM FICHEIRO
@@ -31,22 +22,29 @@ public class WSSolver {
             String lineFile;
             while(sc.hasNextLine()){
                 lineFile = sc.nextLine();
-                if(lineFile.trim().isEmpty()){//verificar se tem linhas vazias
-                    throw new IllegalArgumentException("O ficheiro tem linhas vazias!");
+                //5. No puzzle e na lista de palavras, o ficheiro não pode conter linhas vazias.
+                if(lineFile.trim().isEmpty()){ 
+                    throw new IllegalArgumentException("[ERRO]O ficheiro tem linhas vazias!");
                 }
-                if(isUpper(lineFile.trim())){//verificar se as letras estão em maiuscula
+                //2. As letras do puzzle estão em maiúscula.
+                if(Soup.isUpper(lineFile.trim())){
                     leituraPuzzle.add(lineFile);
                 }
+                //3. Na lista, as palavras podem estar só em minúsculas, ou misturadas.
                 else{
-                    for(String palavra : lineFile.split("[;,\\s]")){ //palavras separadas por ; , 
-                        if(palavra.matches("[a-zA-Z]+")){//verifica palavras com caracteres alfabeticos
-                            leituraPalavrasPuzzle.add(palavra);
+                    //6. Cada linha pode ter mais do que uma palavra, separadas por vírgula, espaço ou ponto e vírgula.
+                    for(String palavra : lineFile.split("[;,\\s]")){
+                        //4. As palavras são compostas por caracteres alfabéticos.
+                        if(!palavra.matches("[a-zA-Z]+")){
+                            throw new IllegalArgumentException(String.format("[ERRO]A palavra %s tem caracteres não alfabeticos!", palavra));
                         }
+                        leituraPalavrasPuzzle.add(palavra);
                     }
                 }
 
             }
-            sopaLetras = new Soup(leituraPuzzle, leituraPalavrasPuzzle);
+            sopaLetras = new Soup(leituraPuzzle);
+            leituraPalavrasPuzzle.forEach(s -> sopaLetras.addWord(s));
             palavrasSolucao = new ArrayList<>();
             return true;
 
@@ -57,7 +55,9 @@ public class WSSolver {
 
     }
     public void solve(){
-        this.sopaLetras.getPalavrasChave().forEach(s -> encontrarPalavra(s));
+        this.sopaLetras.getPalavrasChave().stream()
+        .sorted((a, b) -> Integer.compare(b.length(), a.length()))
+        .forEach(s -> encontrarPalavra(s));
     }
 
     public boolean encontrarPalavra(String word){
@@ -66,7 +66,6 @@ public class WSSolver {
                 if (sopaLetras.getArraySoup()[i][j] == word.toUpperCase().charAt(0) && verificar8direcoes(i,j,word.toUpperCase())){
                     return true;
                 }
-
             }
         }
         System.out.printf("Palavra %s não encontrada!\n",word);
@@ -74,7 +73,7 @@ public class WSSolver {
     }
 
     private boolean verificar8direcoes(int i, int j, String word){
-        if(verificarCima(i, j, word) || verificarDireita(i, j, word) || verificarEsquerda(i, j, word) || verificarBaixo(i, j, word)){
+        if(verificarDireita(i, j, word) || verificarEsquerda(i, j, word) || verificarCima(i, j, word) || verificarBaixo(i, j, word)){
             return true;
         }
         if(verificarCimaDireita(i, j, word) || verificarBaixoDireita(i, j, word)
@@ -94,8 +93,7 @@ public class WSSolver {
                 return false;
             }
         }
-        Word encontrada = new Word(word, i, j, Direction.RIGHT);
-        palavrasSolucao.add(encontrada);
+        preencherPalavraEncontrada(new WordOnSoup(word, i, j, Direction.RIGHT));
         return true;
     }
 
@@ -106,8 +104,7 @@ public class WSSolver {
                 return false;
             }
         }
-        Word encontrada = new Word(word, i, j, Direction.LEFT);
-        palavrasSolucao.add(encontrada);
+        preencherPalavraEncontrada(new WordOnSoup(word, i, j, Direction.LEFT));
         return true;
     }
 
@@ -118,8 +115,7 @@ public class WSSolver {
                 return false;
             }
         }
-        Word encontrada = new Word(word, i, j, Direction.DOWN);
-        palavrasSolucao.add(encontrada);
+        preencherPalavraEncontrada(new WordOnSoup(word, i, j, Direction.DOWN));
         return true;
     }
 
@@ -130,8 +126,7 @@ public class WSSolver {
                 return false;
             }
         }
-        Word encontrada = new Word(word, i, j, Direction.UP);
-        palavrasSolucao.add(encontrada);
+        preencherPalavraEncontrada(new WordOnSoup(word, i, j, Direction.UP));
         return true;
     }
 
@@ -142,8 +137,7 @@ public class WSSolver {
                 return false;
             }
         }
-        Word encontrada = new Word(word, i, j, Direction.UP_RIGHT);
-        palavrasSolucao.add(encontrada);
+        preencherPalavraEncontrada(new WordOnSoup(word, i, j, Direction.UP_RIGHT));
         return true;
     }
 
@@ -154,8 +148,7 @@ public class WSSolver {
                 return false;
             }
         }
-        Word encontrada = new Word(word, i, j, Direction.DOWN_RIGHT);
-        palavrasSolucao.add(encontrada);
+        preencherPalavraEncontrada(new WordOnSoup(word, i, j, Direction.DOWN_RIGHT));
         return true;
         
     }
@@ -167,8 +160,7 @@ public class WSSolver {
                 return false;
             }
         }
-        Word encontrada = new Word(word, i, j, Direction.UP_LEFT);
-        palavrasSolucao.add(encontrada);
+        preencherPalavraEncontrada(new WordOnSoup(word, i, j, Direction.UP_LEFT));
         return true;
 
     }
@@ -180,13 +172,22 @@ public class WSSolver {
                 return false;
             }
         }
-        Word encontrada = new Word(word, i, j, Direction.DOWN_LEFT);
-        palavrasSolucao.add(encontrada);
+        preencherPalavraEncontrada(new WordOnSoup(word, i, j, Direction.DOWN_LEFT));
         return true;
     }
 
+    private void preencherPalavraEncontrada(WordOnSoup word){
+        palavrasSolucao.add(word);
+        int coords[] = {word.getI(), word.getJ()};
+        for (char letra : word.getNome().toCharArray()){
+                this.sopaLetras.getArraySoup()[coords[0]][coords[1]] = '-';
+                coords[0] += word.getDirecao().getDx() ;
+                coords[1] += word.getDirecao().getDy() ;
+            }
+    }
+
     public void showSolution(){
-        for(Word solucao : palavrasSolucao){
+        for(WordOnSoup solucao : palavrasSolucao){
             System.out.println(solucao.toString());
         }
     }
@@ -196,7 +197,7 @@ public class WSSolver {
         for (char[] linha : gridsolution) {
             Arrays.fill(linha, '.');
         }
-        for(Word solucao : palavrasSolucao){
+        for(WordOnSoup solucao : palavrasSolucao){
             int coords[] = {solucao.getI(), solucao.getJ()};
             for (char letra : solucao.getNome().toCharArray()){
                 gridsolution[coords[0]][coords[1]] = letra;
@@ -205,7 +206,7 @@ public class WSSolver {
             }
         }
         Soup sopaSolucao = new Soup(gridsolution);
-        System.out.println(sopaSolucao.toString());
+        System.out.println(sopaSolucao.toStringTerminalOutput());
     }
 
         public static void main(String[] args) {
@@ -221,6 +222,5 @@ public class WSSolver {
             solver.showGraphSolution();
         }
     }
-
 
 }

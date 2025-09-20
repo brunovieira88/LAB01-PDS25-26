@@ -1,10 +1,10 @@
-public class Word {
+public class WordOnSoup {
 
     private String nome;
     private int i,j;
     private Direction direcao;
 
-    Word (String nome, int x ,int y, Direction direction){
+    WordOnSoup(String nome, int x ,int y, Direction direction){
         this.nome = nome;
         this.i = x;
         this.j = y;

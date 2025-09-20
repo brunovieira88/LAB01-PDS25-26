@@ -7,21 +7,21 @@ public class Soup {
     private ArrayList<String> palavrasChave = new ArrayList<>();
 
     //CONSTRUTOR
-    public Soup(ArrayList<String> soup,ArrayList<String> words){
+    public Soup(ArrayList<String> soup){
+        //1. O puzzle é sempre quadrado, com o tamanho máximo de 40x40.
         if(!isSquare(soup)){
-            throw new IllegalArgumentException("A puzzle não é quadrado!");//verficar quadrado
+            throw new IllegalArgumentException("A puzzle não é quadrado!");
         }
         if(soup.size() > 40){
-            throw new IllegalArgumentException("O puzzle tem tamanho superior a 40x40!");//tamanho maximo
+            throw new IllegalArgumentException("O puzzle tem tamanho superior a 40x40!");
         }
         this.dimSoup = soup.size();
         this.arraySoup = new char[dimSoup][dimSoup];
         this.fillSoup(soup);
-        this.setPalavrasChave(words);
     }
 
-    public Soup(char[][] solution){
-        this.arraySoup = solution;
+    public Soup(char[][] soup){
+        this.arraySoup = soup;
     }
 
 
@@ -43,9 +43,10 @@ public class Soup {
         return palavrasChave;
     }
 
-    public void setPalavrasChave(ArrayList<String> listaPalavras) {
-        this.palavrasChave = listaPalavras;
+        public void setPalavrasChave(ArrayList<String> palavrasChave) {
+        this.palavrasChave = palavrasChave;
     }
+    
 
 
     //METODOS ESPECIAIS
@@ -61,6 +62,24 @@ public class Soup {
         for(int i = 0; i < dimSoup; i++){
             arraySoup[i] = soup.get(i).toCharArray();
         }
+    }
+
+    //2. As letras do puzzle estão em maiúscula.
+    public static boolean isUpper(String a){
+        for(Character c: a.toCharArray()){
+            if(Character.isLetter(c)  && Character.isLowerCase(c)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void addWord(String word){
+        //7. Todas as palavras da lista têm de estar no puzzle e apenas uma vez. 
+        if(palavrasChave.contains(word)){
+            throw new IllegalArgumentException(String.format("[ERRO]A palavra %s já existe na sopa de letras!", word));
+        }
+        this.palavrasChave.add(word);
     }
 
 
@@ -83,6 +102,16 @@ public class Soup {
 
     }
 
+    public String toStringTerminalOutput(){
+        StringBuffer out = new StringBuffer();
+        for(char[] linha : arraySoup){
+            for(char caracter: linha){
+                out.append(String.format("%c ", caracter));
+            }
+            out.append("\n");
+        }
+        return out.toString();
+    }
 
 
 

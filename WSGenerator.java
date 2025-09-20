@@ -10,7 +10,7 @@ public class WSGenerator {
     private Random random;
 
 
-    WSGenerator(int size){
+    public WSGenerator(int size){
         this.size = size;
         char[][] grid = new char[size][size];
         this.words = new ArrayList<>();
@@ -31,7 +31,7 @@ public class WSGenerator {
         for (String word: this.words){
             placeWord(word.toUpperCase().trim());
         }
-        fill();
+        this.fill();
         soup.setPalavrasChave(new ArrayList<>(words));
     }
 
@@ -96,7 +96,7 @@ public class WSGenerator {
         for (int i = 0; i < size; i++){
             for (int j = 0; j < size; j++){
                 if(grid[i][j]=='-'){
-                    //letra aleatoria
+                    //(letra aleatoria) 4. As palavras são compostas por caracteres alfabéticos.
                     grid[i][j] = (char)('A' + random.nextInt(26));
                 }
             }
@@ -131,7 +131,7 @@ public class WSGenerator {
         }
 
         if (inputFile == null || outputFile == null) {
-            System.out.println("Error: Forgot -w or -s.");
+            System.out.println("Error: Forgot -i or -s.");
             System.exit(1);;
         }
         try {
@@ -140,6 +140,7 @@ public class WSGenerator {
             try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
                 String line;
                 while ((line = br.readLine()) != null) {
+                    //5. Na lista de palavras, o ficheiro não pode conter linhas vazias.
                     if (!line.trim().isEmpty()) {
                         words.add(line.trim());
                     }
