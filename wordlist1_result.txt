@@ -1,4 +1,0 @@
-LDC
-QUO
-XKN
-java;program;code;receba;matrix;loop;thread;class;object;compile
