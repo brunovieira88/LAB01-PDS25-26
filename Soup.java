@@ -69,12 +69,15 @@ public class Soup {
         StringBuffer out = new StringBuffer();
         for(char[] linha : arraySoup){
             for(char caracter: linha){
-                out.append(String.format("%c ", caracter));
+                out.append(String.format("%c", caracter));
             }
             out.append("\n");
         }
-        for (String palavra : palavrasChave){
-            out.append(palavra).append("\n");
+        for (int i = 0; i < palavrasChave.size(); i++) {
+            out.append(palavrasChave.get(i).toLowerCase());
+            if (i < palavrasChave.size() - 1) {
+                out.append(";");
+            }
         }
         return out.toString();
 

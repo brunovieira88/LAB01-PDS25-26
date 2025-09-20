@@ -29,7 +29,7 @@ public class WSGenerator {
         this.words.sort((a,b)->Integer.compare(b.length(), a.length()));
         //chamar metodo para tentar por cada palavra
         for (String word: this.words){
-            placeWord(word.toLowerCase().trim());
+            placeWord(word.toUpperCase().trim());
         }
         fill();
         soup.setPalavrasChave(new ArrayList<>(words));
@@ -97,7 +97,7 @@ public class WSGenerator {
             for (int j = 0; j < size; j++){
                 if(grid[i][j]=='-'){
                     //letra aleatoria
-                    grid[i][j] = (char)('a' + random.nextInt(26));
+                    grid[i][j] = (char)('A' + random.nextInt(26));
                 }
             }
         }
@@ -109,16 +109,23 @@ public class WSGenerator {
 
     public static void main(String[] args) {
         if (args.length == 0) {
-            System.out.println("Use: java WSGenerator -w <wordlist.txt> -s <saida.txt>");
+            System.out.println("Use: java WSGenerator -i <wordlist.txt> -s <size> -o <output.txt>");
             System.exit(1);
         }
         String inputFile = null;
         String outputFile = null;
-
+        int size;
+        size = 0;
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-w")) {
+            if (args[i].equals("-i")) {
                 inputFile = args[++i];
             } else if (args[i].equals("-s")) {
+                size = Integer.parseInt(args[++i]);
+                if (size > 40) {
+                    System.out.println("Error: Size cannot be greater than 40.");
+                    System.exit(1);
+                }
+            } else if (args[i].equals("-o")){
                 outputFile = args[++i];
             }
         }
@@ -128,7 +135,7 @@ public class WSGenerator {
             System.exit(1);;
         }
         try {
-            //ler palavras d+o file 
+            //ler palavras do file 
             List<String> words = new ArrayList<>();
             try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
                 String line;
@@ -139,7 +146,6 @@ public class WSGenerator {
                 }
             }
 
-            int size = 30;
             WSGenerator generator = new WSGenerator(size);
             generator.generateGrid(words);
 
