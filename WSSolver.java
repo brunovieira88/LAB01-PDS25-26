@@ -51,6 +51,9 @@ public class WSSolver {
         }catch(FileNotFoundException e ){
             System.out.println("Ficheiro não encontrado!");
             return false;
+        }catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            return false;
         }
 
     }
@@ -216,11 +219,11 @@ public class WSSolver {
         }
         
         WSSolver solver = new WSSolver();
+
         if (solver.readWorldSearch(args[0])) {
             solver.solve();
             solver.showSolution();
             solver.showGraphSolution();
         }
     }
-
 }

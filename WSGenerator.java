@@ -23,16 +23,15 @@ public class WSGenerator {
         this.soup = new Soup(grid);
     }
     
-    public void generateGrid(List<String> words) {
-        this.words = new ArrayList<>(words);
+    public void generateGrid() {
         //sort com streams do maior para menor pois maiores mais dificeis de encaixar
         this.words.sort((a,b)->Integer.compare(b.length(), a.length()));
         //chamar metodo para tentar por cada palavra
         for (String word: this.words){
-            placeWord(word.toUpperCase().trim());
+            this.placeWord(word.toUpperCase().trim());
+            this.soup.addWord(word);
         }
         this.fill();
-        soup.setPalavrasChave(new ArrayList<>(words));
     }
 
     private void placeWord(String word){
@@ -109,21 +108,20 @@ public class WSGenerator {
         soup.setArraySoup(grid);
     }
     public Soup getSoup() {
-        return soup;
+        return this.soup;
     }
 
-    public static List<String> readWordsFromFile(String inputFile) throws IOException {
-        List<String> words = new ArrayList<>();
+    public List<String> readWordsFromFile(String inputFile) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
             String line;
             while ((line = br.readLine()) != null) {
             //5. Na lista de palavras, o ficheiro não pode conter linhas vazias.
                 if (!line.trim().isEmpty()) {
-                    words.add(line.trim());
+                    this.words.add(line.trim());
                 }
             }
         }
-        return words;
+        return this.words;
     }
 
     public static void writeSoupToFile(Soup soup, String outputFile) throws IOException {
@@ -157,9 +155,9 @@ public class WSGenerator {
         }
         try {
             //ler palavras do file
-            List<String> words = readWordsFromFile(inputFile);
             WSGenerator generator = new WSGenerator(size);
-            generator.generateGrid(words);
+            generator.readWordsFromFile(inputFile);
+            generator.generateGrid();
             //guardar soupa num file
             writeSoupToFile(generator.getSoup(), outputFile);
 

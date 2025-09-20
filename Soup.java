@@ -10,10 +10,10 @@ public class Soup {
     public Soup(ArrayList<String> soup){
         //1. O puzzle é sempre quadrado, com o tamanho máximo de 40x40.
         if(!isSquare(soup)){
-            throw new IllegalArgumentException("A puzzle não é quadrado!");
+            throw new IllegalArgumentException("[ERRO]A puzzle não é quadrado!");
         }
         if(soup.size() > 40){
-            throw new IllegalArgumentException("O puzzle tem tamanho superior a 40x40!");
+            throw new IllegalArgumentException("[ERRO]O puzzle tem tamanho superior a 40x40!");
         }
         this.dimSoup = soup.size();
         this.arraySoup = new char[dimSoup][dimSoup];
@@ -23,11 +23,11 @@ public class Soup {
     public Soup(char[][] soup){
         //1. O puzzle é sempre quadrado, com o tamanho máximo de 40x40.
         if(soup.length > 40 || soup[0].length > 40){
-            throw new IllegalArgumentException("O puzzle tem tamanho superior a 40x40!");
+            throw new IllegalArgumentException("[ERRO]O puzzle tem tamanho superior a 40x40!");
 
         }
         if(soup.length != soup[0].length){
-            throw new IllegalArgumentException("A puzzle não é quadrado!");
+            throw new IllegalArgumentException("[ERRO]O puzzle não é quadrado!");
         }
         this.arraySoup = soup;
     }
@@ -51,12 +51,7 @@ public class Soup {
         return palavrasChave;
     }
 
-        public void setPalavrasChave(ArrayList<String> palavrasChave) {
-        this.palavrasChave = palavrasChave;
-    }
     
-
-
     //METODOS ESPECIAIS
     public boolean isSquare(){
         return arraySoup[0].length == arraySoup.length;
@@ -120,7 +115,5 @@ public class Soup {
         }
         return out.toString();
     }
-
-
 
 }
