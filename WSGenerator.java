@@ -65,6 +65,11 @@ public class WSGenerator {
                 placed = true;
             }
         }
+        if (!placed){
+            throw new IllegalStateException(
+            String.format("word %s not inserted into the soup", word)
+        );
+        }
         soup.setArraySoup(grid);
 
     }
@@ -107,6 +112,26 @@ public class WSGenerator {
         return soup;
     }
 
+    public static List<String> readWordsFromFile(String inputFile) throws IOException {
+        List<String> words = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+            //5. Na lista de palavras, o ficheiro não pode conter linhas vazias.
+                if (!line.trim().isEmpty()) {
+                    words.add(line.trim());
+                }
+            }
+        }
+        return words;
+    }
+
+    public static void writeSoupToFile(Soup soup, String outputFile) throws IOException {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
+            bw.write(soup.toString());
+        }
+    }
+
     public static void main(String[] args) {
         if (args.length == 0) {
             System.out.println("Use: java WSGenerator -i <wordlist.txt> -s <size> -o <output.txt>");
@@ -114,49 +139,31 @@ public class WSGenerator {
         }
         String inputFile = null;
         String outputFile = null;
-        int size;
-        size = 0;
+        int size = 0;
+        
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-i")) {
                 inputFile = args[++i];
             } else if (args[i].equals("-s")) {
                 size = Integer.parseInt(args[++i]);
-                if (size > 40) {
-                    System.out.println("Error: Size cannot be greater than 40.");
-                    System.exit(1);
-                }
             } else if (args[i].equals("-o")){
                 outputFile = args[++i];
             }
         }
-
-        if (inputFile == null || outputFile == null) {
-            System.out.println("Error: Forgot -i or -s.");
+        
+        if (inputFile == null || outputFile == null || size == 0) {
+            System.out.println("Error: Forgot -i or -s or -o.");
             System.exit(1);;
         }
         try {
-            //ler palavras do file 
-            List<String> words = new ArrayList<>();
-            try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    //5. Na lista de palavras, o ficheiro não pode conter linhas vazias.
-                    if (!line.trim().isEmpty()) {
-                        words.add(line.trim());
-                    }
-                }
-            }
-
+            //ler palavras do file
+            List<String> words = readWordsFromFile(inputFile);
             WSGenerator generator = new WSGenerator(size);
             generator.generateGrid(words);
-
-            //guardar noutro ficheiro 
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
-                bw.write(generator.getSoup().toString());
-            }
+            //guardar soupa num file
+            writeSoupToFile(generator.getSoup(), outputFile);
 
             System.out.println("WordSoup saved with success: " + outputFile);
-
         } catch (IOException e) {
             System.out.println("There was an error processing the files: " + e.getMessage());
         }

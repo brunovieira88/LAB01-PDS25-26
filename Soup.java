@@ -21,6 +21,14 @@ public class Soup {
     }
 
     public Soup(char[][] soup){
+        //1. O puzzle é sempre quadrado, com o tamanho máximo de 40x40.
+        if(soup.length > 40 || soup[0].length > 40){
+            throw new IllegalArgumentException("O puzzle tem tamanho superior a 40x40!");
+
+        }
+        if(soup.length != soup[0].length){
+            throw new IllegalArgumentException("A puzzle não é quadrado!");
+        }
         this.arraySoup = soup;
     }
 
