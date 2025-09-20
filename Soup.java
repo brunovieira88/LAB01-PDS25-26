@@ -51,6 +51,10 @@ public class Soup {
         return palavrasChave;
     }
 
+    public void setPalavrasChave(ArrayList<String> words) {
+        this.palavrasChave = words;
+    }
+
     
     //METODOS ESPECIAIS
     public boolean isSquare(){
