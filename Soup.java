@@ -51,7 +51,7 @@ public class Soup {
         return palavrasChave;
     }
 
-        public void setPalavrasChave(ArrayList<String> palavrasChave) {
+    public void setPalavrasChave(ArrayList<String> palavrasChave) {
         this.palavrasChave = palavrasChave;
     }
     
